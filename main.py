@@ -2,8 +2,11 @@ from crawlers import FBCrawler
 
 
 def debug_print(data):
-    for i in data:
-        print(i)
+    """ Функция для отображения результата в консоли """
+
+    for post in data:
+        date = post.date.strftime("%Y-%m-%d") if post.date else "Unknown"
+        print(f'{date}\n{post.url}\n{post.text}\n')
 
 
 if __name__ == '__main__':

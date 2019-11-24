@@ -14,11 +14,17 @@ from settings import (
     FIREFOX_BINARY,
     USE_PROXY,
     HEADLESS,
+    IMAGES,
+    FLASH,
+    CSS,
+    NOTIFICATIONS,
 )
 
 
 class SeleniumDriver(object):
+    """ Класс для инициализации драйвера """
     def __new__(cls):
+        """ Паттерн Singleton для использования одного драйвера """
         if not hasattr(cls, 'instance'):
             cls.instance = super().__new__(cls)
         return cls.instance
@@ -32,6 +38,8 @@ class SeleniumDriver(object):
 
     @staticmethod
     def __create_driver():
+        """ Метод создания дрйавера с заданными настройками """
+
         binary = FirefoxBinary(FIREFOX_BINARY)
 
         options = Options()
@@ -51,7 +59,19 @@ class SeleniumDriver(object):
             profile.set_preference("network.proxy.socks_port", PROXY_PORT)
             profile.set_preference("network.proxy.socks_remote_dns", False)
 
-        profile.set_preference("dom.push.enabled", False)
+        if not IMAGES:
+            profile.set_preference('permissions.default.image', 2)
+
+        if not CSS:
+            profile.set_preference('permissions.default.stylesheet', 2)
+
+        if not FLASH:
+            profile.set_preference('dom.ipc.plugins.enabled.libflashplayer.so',
+                                   'false')
+
+        if not NOTIFICATIONS:
+            profile.set_preference("dom.push.enabled", False)
+
         profile.update_preferences()
 
         return webdriver.Firefox(firefox_profile=profile,
